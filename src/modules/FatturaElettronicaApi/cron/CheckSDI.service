@@ -1,0 +1,91 @@
+<?php
+/**
+ * FatturaElettronicaApi - Modulo vTiger per la creazione e la trasmissione delle fatture elettroniche al SDI
+ *                         tramite il servizio Fattura Elettronica Api (https://fattura-elettronica-api.it/)
+ * @author Claudio Castelpietra - www.itala.it
+ * @license GPLv3 - https://opensource.org/licenses/GPL-3.0
+ * Tratto da un lavoro originario di: https://github.com/TommasoBilotta/vtiger-fattura-elettronica
+ */
+
+require_once('include/utils/utils.php');
+
+global $adb;
+
+
+require_once 'modules/FatturaElettronicaApi/resources/libs/FatturaElettronicaApiClient.class.php';
+
+include "modules/FatturaElettronicaApi/resources/config.inc.php";
+
+$feac = new FatturaElettronicaApiClient($config['username'], $config['password']);
+
+$result = $feac->ricevi();
+
+if ($result['ack'] == 'KO') {
+	echo "Errore: " . $result['error'];
+} else {
+	echo "Elaborazione iniziata: " . date('Y-m-d H:i:s') . "\n<br>";
+	foreach ($result['data'] as $arrDati) {
+		if (!$arrDati['ricezione']) {
+
+			// È un aggiornamento di un invio
+			$sdiIdentificativo = $arrDati['sdi_identificativo'];
+			if ($arrDati['sdi_stato'] == 'ERRO') {
+				$sdiStato = 'Errore';
+			} elseif ($arrDati['sdi_stato'] == 'CONS') {
+				$sdiStato = 'Consegnato';
+			} elseif ($arrDati['sdi_stato'] == 'NONC') {
+				$sdiStato = 'Non Consegnato';
+			} else {
+				$sdiStato = $arrDati['sdi_stato'];
+			}
+			$sdiMessaggio = $arrDati['sdi_messaggio'];
+
+			$adb->pquery("UPDATE vtiger_invoice SET fe_sdi_stato = ?, fe_sdi_messaggio = ? WHERE fe_sdi_identificativo = ?",
+                         			Array($sdiStato, $sdiMessaggio, $sdiIdentificativo));
+			echo "Aggiorno Stato SDI {$sdiIdentificativo} a {$sdiStato}\n<br>";
+
+		} else {
+
+            continue; // non lo gestiamo ancora
+
+			// È la ricezione di un documento
+
+			$arrDati['sdi_fattura'] = base64_decode($arrDati['sdi_fattura']); // la fattura originale arriva codificata base64
+
+			$sqlInsertUpdate = "
+				sdi_identificativo = '" . $database->escape_string($arrDati['sdi_identificativo']) . "',
+				sdi_stato = 'Ricevuto',
+				sdi_fattura = '" . $database->escape_string($arrDati['sdi_fattura']) . "',
+				sdi_fattura_xml = '" . $database->escape_string($arrDati['sdi_fattura_xml']) . "',
+				sdi_data_aggiornamento = '" . $database->escape_string($arrDati['sdi_data_aggiornamento']) . "',
+				sdi_messaggio = '" . $database->escape_string($arrDati['sdi_messaggio']) . "',
+				sdi_nome_file = '" . $database->escape_string($arrDati['sdi_nome_file']) . "'
+			";
+
+			// verifichiamo se ce l'abbiamo già
+			$res = $database->query("
+				SELECT sdi_identificativo
+				FROM fatture_elettroniche
+				WHERE sdi_identificativo = '" . $database->escape_string($arrDati['sdi_identificativo']) . "'
+			");
+			if ($res->num_rows == 0) {
+				$database->query("
+					INSERT INTO fatture_elettroniche
+					SET {$strInsertUpdate}
+				");
+			} else {
+				// aggiornamento
+				$database->query("
+					UPDATE fatture_elettroniche
+					SET {$strInsertUpdate}
+					WHERE sdi_identificativo = '" . $database->escape_string($arrDati['sdi_identificativo']) . "'
+				");
+			}
+			echo "Inserisco fattura SDI {$arrDati['sdi_identificativo']}\n<br>";
+
+		}
+
+	}
+
+	echo "Elaborazione termin.: " . date('Y-m-d H:i:s') . "\n<br>";
+}

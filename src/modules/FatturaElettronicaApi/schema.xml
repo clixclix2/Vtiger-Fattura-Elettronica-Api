@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<schema>
+    <tables>
+        <table>vtiger_fatturaelettronicaapi</table>
+    </tables>
+</schema>

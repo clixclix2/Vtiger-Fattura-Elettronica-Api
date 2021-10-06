@@ -1,0 +1,36 @@
+<?xml version='1.0'?>
+<module>
+	<exporttime>2021-10-01 09:48:00</exporttime>
+	<name>FatturaElettronicaApi</name>
+	<label>FatturaElettronicaApi</label>
+	<parent>Tools</parent>
+	<type>extension</type>
+	<version>1.0</version>
+	<dependencies>
+		<vtiger_version>6.0.0</vtiger_version>
+		<vtiger_max_version>7.*</vtiger_max_version>
+	</dependencies>
+
+	<license>
+		<inline><![CDATA[
+ **************************************************************************************
+ NOTE IMPORTANTI:
+ - Dopo l'installazione, inserire username e password nel file config.inc.php (modules/FatturaElettronicaApi/resources/config.inc.php)
+ - Per effettuare invii di test al servizio FatturaElettronicaApi, impostare $config['send_test'] = true;
+ - In fase di installazione, vengono creati, tra gli altri, i campi Partita IVA e Codice Fiscale sui moduli Account (tabella vtiger_account) e Contact (vtiger_contactdetails),
+   se si dispone già di tali campi e si vuole utilizzarli, seguire le istruzioni su config.inc.php e poi cancellare i campi dalla tabella vtiger_field
+ - Testato su vTiger 7.3
+ **************************************************************************************
+ *  Module              : FatturaElettronicaApi
+ *  Version             : 1.0
+ *  Vtiger              : 7.*
+ *  Author              : Claudio Castelpietra - Itala Tecnologia Informatica S.r.l. - www.itala.it
+ *  License	            : GPLv3 - https://opensource.org/licenses/GPL-3.0
+ ***************************************************************************************
+ *  Da un progetto originatio di Tommaso Bilotta - https://github.com/TommasoBilotta/vtiger-fattura-elettronica
+ *  License		        : GPLv3 - https://opensource.org/licenses/GPL-3.0
+ **************************************************************************************
+		]]></inline>
+	</license>
+
+</module> 
