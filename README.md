@@ -4,7 +4,7 @@ tramite il servizio Fattura-Elettronica-Api (https://fattura-elettronica-api.it/
 
 È stato testato con Vtiger 7.3. Tuttavia, dovrebbe funzionare anche con versioni precedenti e successive.
 
-FUNZIONAMENTO:
+# Funzionamento
 - In ogni documento di fattura sarà presente il pulsante "Invia Fattura Elettronica"
 - Cliccando, il sistema si interfaccia con Fattura-Elettronica-Api per creare la fattura elettronica e trasmetterla al destinatario tramite l'agenzia delle entrate
 - Su Vtiger rimane salvato l'identificativo della trasmissione (Identificativo SDI), lo stato della trasmissione (Inviato, Consegnato, Non consegnato, Errore) e l'eventuale messaggio di errore.
@@ -13,21 +13,16 @@ FUNZIONAMENTO:
 - In fase di installazione del modulo, viene installato su Vtiger anche un cron task (Impostazioni >> CRM Settings >> Automazione >> Scheduler) che ogni 15 minuti interroga Fattura-Elettronica-Api
 per verificare lo stato di consegna delle fatture trasmesse.
 
-NOTE IMPORTANTI:
-- Dopo l'installazione, inserire **username** e **password** Fattura-Elettronica-Api nel file **config.inc.php** (modules/FatturaElettronicaApi/resources/config.inc.php)
-- Per effettuare invii di test al servizio FatturaElettronicaApi, impostare $config['send_test'] = true;
-- In fase di installazione, vengono creati, tra gli altri, i campi Partita IVA e Codice Fiscale sui moduli Account (tabella vtiger_account) e Contact (vtiger_contactdetails),
-  se si dispone già di tali campi e si vuole utilizzarli, seguire le istruzioni su config.inc.php e poi cancellare i campi dalla tabella vtiger_field
-
-Il modulo viene rilasciato sotto licenza GPLv3, senza alcuna garanzia formale per l'utilizzatore.
-
-Il presente modulo è stato derivato da: https://github.com/TommasoBilotta/vtiger-fattura-elettronica
 
 # Installazione
 
 - Scaricare il file FatturaElettronicaApi.zip
 - Accedere su Impostazioni >> CRM Settings >> Module Management >> Moduli | cliccare [Import Module from Zip] 
 e caricare il file zip.
+- Dopo l'installazione, inserire **username** e **password** Fattura-Elettronica-Api nel file **config.inc.php** (modules/FatturaElettronicaApi/resources/config.inc.php)
+- Per effettuare invii di test al servizio FatturaElettronicaApi, impostare $config['send_test'] = true;
+- Nota: in fase di installazione, vengono creati, tra gli altri, i campi Partita IVA e Codice Fiscale sui moduli Account (tabella vtiger_account) e Contact (vtiger_contactdetails),
+  se si dispone già di tali campi e si vuole utilizzarli, seguire le istruzioni su config.inc.php e poi cancellare i campi dalla tabella vtiger_field
 
 # Assistenza
 
@@ -41,3 +36,9 @@ La trasmissione di un documento con Fattura-Elettronica-Api può avere i seguent
 - **Consegnato** - il documento è stato correttamente consegnato al destinatario
 - **Non Consegnato** - l'agenzia delle entrate non è riuscita a recapitare il documento al destinatario 
   (succede tipicamente se il destinatario è un privato), tuttavia l'azienda che ha emesso il documento ha ottemperato correttamente al suo obbligo di trasmettere il documento all'agenzia delle entrate
+
+# Licenza e garanzie
+
+Il modulo viene rilasciato sotto licenza GPLv3, senza alcuna garanzia formale per l'utilizzatore.
+
+Il presente modulo è stato derivato da: https://github.com/TommasoBilotta/vtiger-fattura-elettronica
